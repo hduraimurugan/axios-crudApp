@@ -8,6 +8,7 @@ const CrudApp = () => {
     const [users, setUsers] = useState([]);
     const [newName, setNewName] = useState("");
     const [newEmail, setNewEmail] = useState("");
+    const [newCompany, setNewCompany] = useState("");
     const [newWebsite, setNewWebsite] = useState("");
     const [toastMessage, setToastMessage] = useState(null);
 
@@ -30,19 +31,22 @@ const CrudApp = () => {
     function addUser() {
         const name = newName.trim();
         const email = newEmail.trim();
+        const company = newCompany.trim();
         const website = newWebsite.trim();
-
-        if (name && email && website) {
+        
+        if (name && email && company && website) {
             axios.post("https://jsonplaceholder.typicode.com/users", {
                 name,
                 email,
-                website
+                company: { name: company },  // Create a company object with a name property
+                website,
             })
             .then((response) => {
                 setUsers([...users, response.data]);
                 showToast("User added successfully", "success");
                 setNewName("");
                 setNewEmail("");
+                setNewCompany("");
                 setNewWebsite("");
             })
             .catch((error) => {
@@ -55,7 +59,16 @@ const CrudApp = () => {
     function onChangeHandler(id, key, value) {
         setUsers((users) => {
             return users.map(user => {
-                return user.id === id ? { ...user, [key]: value } : user;
+                if (user.id === id) {
+                    if (key === 'company') {
+                        // Update the company name
+                        return { ...user, company: { ...user.company, name: value } };
+                    } else {
+                        return { ...user, [key]: value };
+                    }
+                } else {
+                    return user;
+                }
             });
         });
     }
@@ -101,6 +114,7 @@ const CrudApp = () => {
                             <th scope="col">ID</th>
                             <th scope="col">Name</th>
                             <th scope="col">Email</th>
+                            <th scope="col">Company</th>
                             <th scope="col">Website</th>
                             <th scope="col">Action</th>
                         </tr>
@@ -119,6 +133,12 @@ const CrudApp = () => {
                                     <EditableText
                                         onChange={value => onChangeHandler(user.id, 'email', value)}
                                         value={user.email}
+                                    />
+                                </td>
+                                <td>
+                                    <EditableText
+                                        onChange={value => onChangeHandler(user.id, 'company', value)}
+                                        value={user.company?.name || ""}
                                     />
                                 </td>
                                 <td>
@@ -151,6 +171,14 @@ const CrudApp = () => {
                                     value={newEmail}
                                     onChange={(e) => setNewEmail(e.target.value)}
                                     placeholder='Enter Email...'
+                                    className="form-control"
+                                />
+                            </td>
+                            <td>
+                                <InputGroup
+                                    value={newCompany}
+                                    onChange={(e) => setNewCompany(e.target.value)}
+                                    placeholder='Enter Company name...'
                                     className="form-control"
                                 />
                             </td>
