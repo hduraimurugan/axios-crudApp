@@ -98,11 +98,11 @@ const CrudApp = () => {
                 <table className="table table-striped">
                     <thead className="thead-dark">
                         <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Website</th>
-                            <th>Action</th>
+                            <th scope="col">ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Website</th>
+                            <th scope="col">Action</th>
                         </tr>
                     </thead>
                     <tbody>
